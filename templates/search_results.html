@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        .header {
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title {
+            margin: 0;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+        }
+        .search-bar input[type="text"] {
+            margin-right: 10px;
+            width: 50%;
+            padding: 5px;
+            font-size: 16px;
+        }
+        .game-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .game-name {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .release-date {
+            font-style: italic;
+            color: #666;
+        }
+        .description {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="header-title">Game Review Site</h1>
+        <form class="search-bar" action="{{ url_for('search') }}" method="get">
+            <input type="text" name="query" placeholder="Search...">
+            <input type="submit" value="Search">
+        </form>
+    </div>
+    {% for game in games %}
+    <div class="game-box">
+        <h1><a href="{{ url_for('game_page', guid=game.GUID) }}">{{ game.Name }}</a></h1>
+        <div class="release-date">Release Date: {{ game.ReleaseDate }}</div>
+        <div class="description">{{ game.Description | safe }}</div>
+    </div>
+    {% endfor %}
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>

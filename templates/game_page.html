@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ game.Name }}</title>
+    <style>
+        .header {
+            background-color: green;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title {
+            margin: 0;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+        }
+        .search-bar input[type="text"] {
+            margin-right: 10px;
+            width: 50%;
+            padding: 5px;
+            font-size: 16px;
+        }
+        .game-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .game-name {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .release-date {
+            font-style: italic;
+            color: #666;
+        }
+        .description {
+            margin-top: 10px;
+        }
+        .game-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #review-form {
+            margin-top: 20px; /* Add some space between the button and the form */
+        }
+        #content {
+            width: 100%; /* Make the content box take up the full width of the form */
+            height: 200px; /* Make the content box 200px tall */
+        }
+        #rating {
+            margin-left: 10px; /* Add some space between the content box and the rating dropdown */
+        }
+        .reviews-container {
+            border: 1px solid #000;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .review-box {
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="header-title">Game Review Site</h1>
+        <form class="search-bar" action="{{ url_for('search') }}" method="get">
+            <input type="text" name="query" placeholder="Search...">
+            <input type="submit" value="Search">
+        </form>
+    </div>
+    <div class="game-box">
+        <h1>{{ game.Name }} - Score: {{ average_rating }}</h1>
+        <div class="release-date">Release Date: {{ game.ReleaseDate }}</div>
+        <div class="description">{{ game.Description | safe }}</div>
+        <a href="{{ url_for('index') }}">Back to Home</a>
+    </div>
+
+    {% if 'user_id' in session %}
+        {% if user_already_reviewed %}
+            <p>You already wrote your review, but you can edit it!</p>
+        {% else %}
+            <button id="start-review-button">Start Review</button>
+        {% endif %}
+
+        <form id="review-form" style="display: none;" action="" method="post">
+            <input type="hidden" id="ReviewID" name="ReviewID">
+            <textarea id="content" name="content" placeholder="Write your review here..."></textarea>
+            <label for="rating">Rating:</label>
+            <select id="rating" name="rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <input type="submit" value="Submit">
+        </form>
+    {% else %}
+        <p>You must be logged in to write a review.</p>
+    {% endif %}
+
+    <h2>Reviews</h2>
+
+    <div class="reviews-container">
+        {% for review in reviews %}
+            <div class="review-box">
+                <h3>By: <a href="{{ url_for('profile', username=review.user.Username) }}">{{ review.user.Username }}</a> - Rating: {{ review.Rating }}</h3>
+                <p>{{ review.Content }}</p>
+                {% if 'user_id' in session and session['user_id'] == review.UserID %}
+                    <button class="edit-button">Edit</button>
+                    <form class="edit-form" action="{{ url_for('update_review', review_id=review.ReviewID) }}" method="post" style="display: none;">
+                        <textarea name="content" rows="4" cols="50">{{ review.Content }}</textarea>
+                        <select name="rating">
+                            {% for i in range(1, 6) %}
+                                <option value="{{ i }}" {% if i == review.Rating %} selected {% endif %}>{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Save</button>
+                    </form>
+                    <form action="{{ url_for('delete_review', review_id=review.ReviewID) }}" method="post">
+                        <button type="submit">Delete</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    
+    <script>
+        var editButtons = document.getElementsByClassName('edit-button');
+        for (var i = 0; i < editButtons.length; i++) {
+            editButtons[i].addEventListener('click', function() {
+                var form = this.nextElementSibling;
+                form.style.display = 'block';
+            });
+        }
+    </script>
+
+</body>
+</html>

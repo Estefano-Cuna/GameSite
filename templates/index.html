@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        .header {
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title {
+            margin: 0;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+        }
+        .search-bar input[type="text"] {
+            margin-right: 10px;
+            width: 50%;
+            padding: 5px;
+            font-size: 16px;
+        }
+        .game-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .game-name {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .release-date {
+            font-style: italic;
+            color: #666;
+        }
+        .description {
+            margin-top: 10px;
+        }
+        .auth-buttons {
+            float: right;
+        }
+        .auth-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .auth-button:hover {
+            background-color: #0056b3;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .pagination a {
+            margin: 0 10px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+        }
+        .pagination .active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .header a {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .header a:hover {
+            background-color: #0056b3;
+        }
+        .header form.inline {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="header-title">Game Review Site</h1>
+        <form class="search-bar" action="{{ url_for('search') }}" method="get">
+            <input type="text" name="query" placeholder="Search...">
+            <input type="submit" value="Search">
+        </form>
+        <div>
+            {% if 'user_id' in session %}
+                <form class="inline" action="{{ url_for('profile', username=session['Username']) }}" method="get">
+                    <button class="auth-button" type="submit">Profile</button>
+                </form>
+                <span>Welcome, {{ session['Username'] }}</span>
+                <a class="auth-button" href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a class="auth-button" href="{{ url_for('login') }}">Login</a>
+                <a class="auth-button" href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </div>
+    </div>
+    <h1>Games</h1>
+    {% for game in games %}
+        <div class="game-box">
+            <div class="game-name"><a href="{{ url_for('game_page', guid=game.GUID) }}">{{ game.Name }}</a></div>
+            <div class="release-date">Release Date: {{ game.ReleaseDate }}</div>
+            <div class="game-description">{{ game.Description|safe }}</div>
+        </div>
+    {% endfor %}
+    <div class="pagination">
+        {% for page_num in games.iter_pages() %}
+            {% if page_num %}
+                {% if games.page == page_num %}
+                    <a class="active" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+                {% else %}
+                    <a href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+                {% endif %}
+            {% else %}
+                ...
+            {% endif %}
+        {% endfor %}
+    </div>
+</body>
+</html>
