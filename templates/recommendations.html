@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Recommendations</title>
+    <!-- Add your CSS here -->
     <style>
         .header {
             background-color: blue;
@@ -120,13 +119,17 @@
             {% endif %}
         </div>
     </div>
-    <h1>Games</h1>
-    {% for game in games %}
-        <div class="game-box">
-            <div class="game-name"><a href="{{ url_for('game_page', guid=game.GUID) }}">{{ game.Name }}</a></div>
-            <div class="release-date">Release Date: {{ game.ReleaseDate }}</div>
-            <div class="game-description">{{ game.Description|safe }}</div>
-        </div>
-    {% endfor %}
+    <div class="content">
+        <h2>Recommended Games</h2>
+        {% for game in games %}
+            <div class="game-box">
+                <h1><a href="{{ url_for('game_page', guid=game.GUID) }}">{{ game.Name }}</a></h1>
+                <div class="release-date">Release Date: {{ game.ReleaseDate }}</div>
+                <div class="description">{{ game.Description | safe }}</div>
+                <div class="genre">Genre: {{ game.GenreName }}</div>
+            </div>
+            {% endfor %}
+            <a href="{{ url_for('index') }}">Back to Home</a>
+    </div>
 </body>
 </html>

@@ -34,13 +34,19 @@
             color: red;
             margin-bottom: 10px;
         }
+        .review-box {
+            border: 1px solid #000;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1 class="header-title">Game Review Site</h1>
-        <form class="search-bar" action="{{ url_for('search') }}" method="get">
-            <input type="text" name="query" placeholder="Search...">
+        <h1 class="header-title"><a href="{{ url_for('index') }}">Game Review Site</a></h1>
+        <form class="search-bar" action="{{ url_for('search') }}" method="post">
+            <input type="text" name="search" placeholder="Search...">
             <input type="submit" value="Search">
         </form>
         <div>
@@ -60,9 +66,9 @@
         <h1>{{ user.Username }}</h1>
         <h2>Reviews:</h2>
         <div class="reviews-container">
-            {% for review, game in reviews %}
+            {% for review in reviews %}
                 <div class="review-box">
-                    <h3><a href="{{ url_for('game_page', guid=game.GUID) }}">{{ game.Name }}</a> - Rating: {{ review.Rating }}</h3>
+                    <h3><a href="{{ url_for('game_page', guid=review.GameGUID) }}">{{ review.GameName }}</a> - Rating: {{ review.Rating }}</h3>
                     <p>{{ review.Content }}</p>
                 </div>
             {% endfor %}

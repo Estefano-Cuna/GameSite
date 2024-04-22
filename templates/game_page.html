@@ -78,8 +78,8 @@
 </head>
 <body>
     <div class="header">
-        <h1 class="header-title">Game Review Site</h1>
-        <form class="search-bar" action="{{ url_for('search') }}" method="get">
+        <h1 class="header-title"><a href="{{ url_for('index') }}">Nostalgia Tracker</a></h1>
+        <form class="search-bar" action="{{ url_for('search') }}" method="post">
             <input type="text" name="query" placeholder="Search...">
             <input type="submit" value="Search">
         </form>
@@ -98,7 +98,7 @@
             <button id="start-review-button">Start Review</button>
         {% endif %}
 
-        <form id="review-form" style="display: none;" action="" method="post">
+        <form id="review-form" style="display: none;" action="{{ url_for('submit_review', guid=game.GUID) }}" method="post">
             <input type="hidden" id="ReviewID" name="ReviewID">
             <textarea id="content" name="content" placeholder="Write your review here..."></textarea>
             <label for="rating">Rating:</label>
@@ -120,10 +120,10 @@
     <div class="reviews-container">
         {% for review in reviews %}
             <div class="review-box">
-                <h3>By: <a href="{{ url_for('profile', username=review.user.Username) }}">{{ review.user.Username }}</a> - Rating: {{ review.Rating }}</h3>
+                <h3>By: <a href="{{ url_for('profile', username=review.Username) }}">{{ review.Username }}</a> - Rating: {{ review.Rating }}</h3>
                 <p>{{ review.Content }}</p>
                 {% if 'user_id' in session and session['user_id'] == review.UserID %}
-                    <button class="edit-button">Edit</button>
+                <button class="edit-button" onclick="this.nextElementSibling.style.display = 'block'">Edit</button>
                     <form class="edit-form" action="{{ url_for('update_review', review_id=review.ReviewID) }}" method="post" style="display: none;">
                         <textarea name="content" rows="4" cols="50">{{ review.Content }}</textarea>
                         <select name="rating">
@@ -142,6 +142,10 @@
     </div>
     
     <script>
+        document.getElementById('start-review-button').addEventListener('click', function() {
+            document.getElementById('review-form').style.display = 'block';
+        });
+        
         var editButtons = document.getElementsByClassName('edit-button');
         for (var i = 0; i < editButtons.length; i++) {
             editButtons[i].addEventListener('click', function() {

@@ -6,7 +6,7 @@
     <title>Register</title>
     <style>
         .header {
-            background-color: purple;
+            background-color: orange;
             color: white;
             padding: 10px;
             text-align: left;
@@ -45,9 +45,9 @@
 </head>
 <body>
     <div class="header">
-        <h1 class="header-title">Game Review Site</h1>
-        <form class="search-bar" action="{{ url_for('search') }}" method="get">
-            <input type="text" name="query" placeholder="Search...">
+        <h1 class="header-title"><a href="{{ url_for('index') }}">Nostalgia Tracker</a></h1>
+        <form class="search-bar" action="{{ url_for('search') }}" method="post">
+            <input type="text" name="search" placeholder="Search...">
             <input type="submit" value="Search">
         </form>
     </div>
